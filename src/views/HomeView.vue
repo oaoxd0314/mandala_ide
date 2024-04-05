@@ -8,4 +8,6 @@ import { useMandalaGridGrid } from '@/composables/useMandalaGrid'
 
 const { rootGrid, findGridByNode } = useMandalaGridGrid();
 
+console.log(rootGrid.value)
+
 </script>
