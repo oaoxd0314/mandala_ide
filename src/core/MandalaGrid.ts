@@ -2,6 +2,11 @@ import { MandalaNode } from '@/core/MandalaNode';
 
 type GridType = 'Exploratory' | 'Sequential';
 
+
+export interface iMandalaGrid {
+    rootNode: MandalaNode;
+    type: GridType;
+}
 export class MandalaGrid {
     rootNode: MandalaNode;
     type: GridType;

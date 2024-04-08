@@ -2,19 +2,20 @@
 </script>
 
 <template>
-<main>
+  <main>
+    <!-- side menu -->
+    <div>
+      <button class="side-menu"> ||| </button>
+    </div>
 
-  <!-- side menu -->
-  <div>
-    <button class="side-menu" > ||| </button>
-  </div>
-    
+
     <RouterView />
 
     <!-- bottom tool  -->
-    <div class="tool-bar"> 
-      <button> create node </button>
-      <button> create edge </button>
+    <div class="tool-bar">
+      <button> Create New Space </button>
+      <button> Create New Grid </button>
+      <button> Export Grid </button>
     </div>
 
   </main>
@@ -30,9 +31,10 @@ import { RouterView } from 'vue-router'
 main {
   flex-grow: 1;
   position: relative;
+  display: flex;
 }
 
-.side-menu{
+.side-menu {
   margin: 16px;
   position: absolute;
   top: 0;
@@ -40,7 +42,7 @@ main {
 
 }
 
-.tool-bar{
+.tool-bar {
   justify-content: center;
   display: flex;
   position: absolute;
@@ -49,10 +51,10 @@ main {
   margin: auto;
   bottom: 0;
   margin: 16px;
-  button{
+
+  button {
     margin: 8px;
     border: 0;
   }
 }
-
 </style>
