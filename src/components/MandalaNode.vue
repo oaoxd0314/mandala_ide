@@ -11,14 +11,17 @@
 import type { iMandalaNode } from '@/core/MandalaNode';
 import { ref, type Ref, nextTick, watchEffect } from 'vue'
 
-const { node } = defineProps<{ node: iMandalaNode }>();
+const { node, focus } = defineProps<{ node: iMandalaNode, focus: boolean }>();
+const emit = defineEmits(['focusNextNode'])
 
 const input: Ref<HTMLInputElement | undefined> = ref();
 const message = ref(node.title);
 const isNodeFocused = ref(false);
 
+
+
 watchEffect(() => {
-    if (isNodeFocused.value) {
+    if (isNodeFocused.value || focus) {
         nextTick(() => {
             input.value?.focus();
         });
@@ -27,6 +30,7 @@ watchEffect(() => {
 
 const onPressEnter = (event: KeyboardEvent) => {
     isNodeFocused.value = false
+    emit('focusNextNode');
 };
 
 </script>
