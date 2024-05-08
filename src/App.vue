@@ -29,9 +29,8 @@ import { RouterView } from 'vue-router'
 
 <style scoped>
 main {
-  flex-grow: 1;
+  height: 100vh;
   position: relative;
-  display: flex;
 }
 
 .side-menu {
@@ -39,7 +38,6 @@ main {
   position: absolute;
   top: 0;
   left: 0;
-
 }
 
 .tool-bar {
