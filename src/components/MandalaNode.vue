@@ -18,8 +18,6 @@ const input: Ref<HTMLInputElement | undefined> = ref();
 const message = ref(node.title);
 const isNodeFocused = ref(false);
 
-
-
 watchEffect(() => {
     if (isNodeFocused.value || focus) {
         nextTick(() => {
