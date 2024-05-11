@@ -1,5 +1,5 @@
 <template>
-    <div class="grid-container">
+    <div ref="gridElement" class="grid-container">
         <MandalaNode @focusNextNode="focusNextNode(index)" :focus="focusTarget === index" :node="node"
             v-for="(node, index) in nodes" :key="index"
             :style="`grid-column: ${gridLayout[index].col}; grid-row:${gridLayout[index].row};`">
@@ -14,8 +14,13 @@ import type { iMandalaGrid } from '@/core/MandalaGrid'
 import { computed, ref } from 'vue';
 import MandalaNode from '@/components/MandalaNode.vue';
 
+const gridElement = ref<HTMLElement | null>(null);
 const { grid } = defineProps<{ grid: iMandalaGrid }>();
 const focusTarget = ref(0);
+
+defineExpose({
+    gridElement
+})
 
 const gridLayout = [
     { col: 2, row: 2 }, // 中間
@@ -32,7 +37,6 @@ const gridLayout = [
 const focusNextNode = (index: number) => {
     focusTarget.value = index + 1;
 }
-
 
 const nodes = computed(() => {
     const root = grid.rootNode;

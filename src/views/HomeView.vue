@@ -1,7 +1,8 @@
 <template>
-  <div class="space-container">
-    <MandalaGrid ref="dragElement" :grid="rootGrid" @mousedown="handleMousedown" @mousemove="handleMouseMove"
-      @mouseup="handleMouseUp" class="drag-element" :style="{ left: `${pivotX}px`, top: `${pivotY}px` }">
+  <div ref="space" class="space-container">
+    <MandalaGrid ref="childComponentRef" :grid="rootGrid" @mousedown="(e) => handleMousedown(e, gridElement)"
+      @mousemove="handleMouseMove" @mouseup="handleMouseUp" class="drag-element"
+      :style="{ left: `${locate.x}px`, top: `${locate.y}px` }">
     </MandalaGrid>
   </div>
 
@@ -10,39 +11,29 @@
 <script setup lang="ts">
 import MandalaGrid from '@/components/MandalaGrid.vue';
 import { useMandalaGridGrid } from '@/composables/useMandalaGrid'
-import { useMouseControl } from '@/composables/useMouseControl'
+import { useMouseDrag } from '@/composables/useMouseDrag'
+import type { MandalaGridRef } from '@/components/interfaces/MandalaGrid'
+import { computed, onMounted, ref } from 'vue';
 
-import { watch, onMounted, ref } from 'vue';
+const { rootGrid } = useMandalaGridGrid();
+const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
+const childComponentRef = ref<MandalaGridRef | null>(null);
+const space = ref<HTMLElement | null>(null);
 
-const dragElement = ref<HTMLElement | null>(null);
-const { rootGrid, findGridByNode } = useMandalaGridGrid();
-const { locate, handleMouseMove, handleMouseUp, handleMousedown } = useMouseControl();
-
-const elementOffset = ref({
-  width: 0,
-  height: 0
-})
-
-const pivotX = ref(0);
-const pivotY = ref(0);
-
-watch(locate.value, () => {
-  pivotX.value = locate.value.x - (elementOffset.value.width / 2);
-  pivotY.value = locate.value.y - (elementOffset.value.height / 2);
-})
-
-
-onMounted(() => {
-  dragElement.value = document.querySelector('.drag-element');
-  if (dragElement.value) {
-    elementOffset.value = {
-      width: dragElement.value.offsetWidth,
-      height: dragElement.value.offsetHeight
-    }
-  }
+const gridElement = computed<HTMLElement | null>(() => {
+  return childComponentRef.value?.gridElement ?? null;
 });
 
+onMounted(() => {
+  if (space.value && gridElement.value) {
+    const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
+    const elOffsetHeight = gridElement.value.offsetHeight ?? 0;
+    const top = (space.value.clientHeight - elOffsetHeight) / 2
+    const left = (space.value.clientWidth - elOffsetWidth) / 2
 
+    setInitLocate(top, left);
+  }
+});
 
 </script>
 

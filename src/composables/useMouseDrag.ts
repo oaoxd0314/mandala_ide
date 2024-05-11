@@ -8,32 +8,59 @@ import { ref } from 'vue';
  * @function handleMouseMove 來處理滑鼠移動的事件
  * @function handleMouseUp 來處理滑鼠放開的事件
  */
-export const useMouseControl = () => {
+export const useMouseDrag = () => {
+  /**
+   * 是否正在拖拉
+   */
   const drag = ref(false)
+  /**
+   * 滑鼠相對於 Drag Element 的位置
+   */
+  const relativeMouseLocate = ref({ x: 0, y: 0 })
+  /**
+   * Drag Element 的位置
+   */
   const locate = ref({ x: 0, y: 0 })
 
-  function handleMousedown(e: MouseEvent) {
+  function setInitLocate(top: number, left: number) {
+    locate.value.x = left
+    locate.value.y = top
+  }
+
+  /**
+   * 處理滑鼠按下的事件
+   * 
+   * @param e MouseEvent
+   * @param dragElement number
+   */
+  function handleMousedown(e: MouseEvent, dragElement: HTMLElement | null) {
     setupMouseControlEventsInWindow();
     drag.value = true
+
+    if (dragElement) {
+      const rect = dragElement.getBoundingClientRect()
+      // 計算滑鼠相對於 Drag Element 的位置，以便於拖拉時不會讓 Drag Element 跳動
+      relativeMouseLocate.value = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
   }
 
   function handleMouseMove(e: MouseEvent) {
     if (!drag.value) {
       return;
     }
-
-    locate.value.x = e.clientX
-    locate.value.y = e.clientY
+    locate.value.x = e.clientX - relativeMouseLocate.value.x
+    locate.value.y = e.clientY - relativeMouseLocate.value.y
   }
 
-  function handleMouseUp(e: MouseEvent) {
+  function handleMouseUp() {
     if (!drag.value) {
       return;
     }
 
     removeMouseControlEventsFromWindow();
-    locate.value.x = e.clientX
-    locate.value.y = e.clientY
     drag.value = false
   }
 
@@ -63,6 +90,7 @@ export const useMouseControl = () => {
   }
 
   return {
+    setInitLocate,
     handleMousedown,
     handleMouseMove,
     handleMouseUp,
