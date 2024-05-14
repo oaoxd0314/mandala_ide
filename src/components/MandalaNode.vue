@@ -18,16 +18,14 @@ const input: Ref<HTMLInputElement | undefined> = ref();
 const message = ref(props.node.title);
 const isNodeFocused = ref(false);
 
-watch(props, () => {
-    if (props.focus) {
-        nextTick(() => {
-            isNodeFocused.value = true;
-            input.value?.focus();
-        });
-    }
+watch(() => props.focus, () => {
+    isNodeFocused.value = true;
+    nextTick(() => {
+        input.value?.focus();
+    });
 });
 
-const onPressEnter = (event: KeyboardEvent) => {
+const onPressEnter = () => {
     isNodeFocused.value = false
     emit('focusNextNode');
 };
