@@ -20,9 +20,14 @@ const isNodeFocused = ref(false);
 
 watch(() => props.focus, () => {
     isNodeFocused.value = true;
-    nextTick(() => {
-        input.value?.focus();
-    });
+});
+
+watch(isNodeFocused, (isFocus: boolean) => {
+    if (isFocus) {
+        nextTick(() => {
+            input.value?.focus();
+        });
+    }
 });
 
 const onPressEnter = () => {

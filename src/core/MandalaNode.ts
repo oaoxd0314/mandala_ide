@@ -6,7 +6,7 @@ export interface iMandalaNode {
     updateTitle(newTitle: string): void;
 }
 
-export class MandalaNode implements iMandalaNode{
+export class MandalaNode implements iMandalaNode {
     title: string;
     content: string;
     children: MandalaNode[];
@@ -28,4 +28,6 @@ export class MandalaNode implements iMandalaNode{
     hasChildren(): boolean {
         return this.children.length > 0;
     }
+
+    // TODO: know the position of the grid
 }
