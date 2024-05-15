@@ -11,14 +11,14 @@ export class MandalaGrid {
     rootNode: MandalaNode;
     type: GridType;
 
-    constructor(type: GridType = 'Exploratory',rootNode?: MandalaNode) {
-        this.rootNode = rootNode ?? new MandalaNode(); 
+    constructor(type: GridType = 'Exploratory', rootNode?: MandalaNode) {
+        this.rootNode = rootNode ?? new MandalaNode();
         this.type = type;
         this.initializeGrid();
     }
 
     private initializeGrid(): void {
-        if(this.rootNode.hasChildren()){
+        if (this.rootNode.hasChildren()) {
             return;
         }
 
@@ -26,10 +26,10 @@ export class MandalaGrid {
             const exploreNodes = Array(8).fill(null).map(() => new MandalaNode());
             this.rootNode.children = exploreNodes
         }
-        
-        
+
+
         if (this.type === "Sequential") {
-            this.appendChildSequential(this.rootNode,8)
+            this.appendChildSequential(this.rootNode, 8)
         }
     }
 
@@ -39,5 +39,7 @@ export class MandalaGrid {
         currentNode.children.push(childNode);
         this.appendChildSequential(childNode, depth - 1);
     }
+
+    //TODO: to find the all child nodes
 
 }

@@ -16,7 +16,7 @@ import MandalaNode from '@/components/MandalaNode.vue';
 
 const gridElement = ref<HTMLElement | null>(null);
 const { grid } = defineProps<{ grid: iMandalaGrid }>();
-const focusTarget = ref(0);
+const focusTarget = ref<number | null>(null);
 
 defineExpose({
     gridElement

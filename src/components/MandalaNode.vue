@@ -9,24 +9,28 @@
 
 <script setup lang="ts">
 import type { iMandalaNode } from '@/core/MandalaNode';
-import { ref, type Ref, nextTick, watchEffect } from 'vue'
+import { ref, type Ref, nextTick, watch } from 'vue'
 
-const { node, focus } = defineProps<{ node: iMandalaNode, focus: boolean }>();
+const props = defineProps<{ node: iMandalaNode, focus: boolean }>();
 const emit = defineEmits(['focusNextNode'])
 
 const input: Ref<HTMLInputElement | undefined> = ref();
-const message = ref(node.title);
+const message = ref(props.node.title);
 const isNodeFocused = ref(false);
 
-watchEffect(() => {
-    if (isNodeFocused.value || focus) {
+watch(() => props.focus, () => {
+    isNodeFocused.value = true;
+});
+
+watch(isNodeFocused, (isFocus: boolean) => {
+    if (isFocus) {
         nextTick(() => {
             input.value?.focus();
         });
     }
 });
 
-const onPressEnter = (event: KeyboardEvent) => {
+const onPressEnter = () => {
     isNodeFocused.value = false
     emit('focusNextNode');
 };
