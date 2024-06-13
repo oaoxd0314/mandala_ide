@@ -1,19 +1,23 @@
 import { MandalaNode } from '@/core/MandalaNode';
+import _ from 'lodash';
 
 type GridType = 'Exploratory' | 'Sequential';
 
 
 export interface iMandalaGrid {
+    uid: string;
     rootNode: MandalaNode;
     type: GridType;
 }
-export class MandalaGrid {
+export class MandalaGrid implements iMandalaGrid {
+    uid: string;
     rootNode: MandalaNode;
     type: GridType;
 
     constructor(type: GridType = 'Exploratory', rootNode?: MandalaNode) {
         this.rootNode = rootNode ?? new MandalaNode();
         this.type = type;
+        this.uid = _.uniqueId('mandala-grid-');
         this.initializeGrid();
     }
 
