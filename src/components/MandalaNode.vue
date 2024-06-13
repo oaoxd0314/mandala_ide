@@ -1,5 +1,5 @@
 <template>
-    <div class="node" @click="isNodeFocused = true">
+    <div class="node" @click="isNodeFocused = true" @contextmenu="(e) => { console.log('right click', e) }">
         <input autofocus v-if="isNodeFocused" v-model="message" @keyup.enter="onPressEnter"
             @blur="isNodeFocused = false" ref="input" />
         <span v-else> {{ message.length > 0 ? message : "type some idea" }}</span>

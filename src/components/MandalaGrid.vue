@@ -1,26 +1,24 @@
 <template>
-    <div ref="gridElement" class="grid-container">
+    <div @mousedown="(e) => handleMousedown(e, gridElement)" @mousemove="handleMouseMove" @mouseup="handleMouseUp"
+        ref="gridElement" class="grid-container" :style="{ left: `${locate.x}px`, top: `${locate.y}px` }">
         <MandalaNode @focusNextNode="focusNextNode(index)" :focus="focusTarget === index" :node="node"
             v-for="(node, index) in nodes" :key="index"
             :style="`grid-column: ${gridLayout[index].col}; grid-row:${gridLayout[index].row};`">
             {{ index }}
         </MandalaNode>
     </div>
-
 </template>
 
 <script setup lang="ts">
 import type { iMandalaGrid } from '@/core/MandalaGrid'
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useMouseDrag } from '@/composables/useMouseDrag'
 import MandalaNode from '@/components/MandalaNode.vue';
 
+const { grid, container } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null }>();
 const gridElement = ref<HTMLElement | null>(null);
-const { grid } = defineProps<{ grid: iMandalaGrid }>();
-const focusTarget = ref<number | null>(null);
-
-defineExpose({
-    gridElement
-})
+const focusTarget = ref<number | null>(null)
+const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
 
 const gridLayout = [
     { col: 2, row: 2 }, // 中間
@@ -44,6 +42,16 @@ const nodes = computed(() => {
     return [root, ...root.children]
 });
 
+onMounted(() => {
+    if (container && gridElement.value) {
+        const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
+        const elOffsetHeight = gridElement.value.offsetHeight ?? 0;
+        const top = (container.clientHeight - elOffsetHeight) / 2
+        const left = (container.clientWidth - elOffsetWidth) / 2
+
+        setInitLocate(top, left);
+    }
+});
 </script>
 
 <style scoped>
