@@ -1,5 +1,5 @@
 <template>
-    <div class="node" @click="isNodeFocused = true" @contextmenu="(e) => { console.log('right click', e) }">
+    <div class="node" @click="isNodeFocused = true">
         <input autofocus v-if="isNodeFocused" v-model="message" @keyup.enter="onPressEnter"
             @blur="isNodeFocused = false" ref="input" />
         <span v-else> {{ message.length > 0 ? message : "type some idea" }}</span>
@@ -70,4 +70,14 @@ const onPressEnter = () => {
         padding: 0
     }
 }
-</style>
+
+.menu {
+    position: absolute;
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid black;
+    padding: 8px;
+    border-radius: 5%;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+</style>style

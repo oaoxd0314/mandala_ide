@@ -55,12 +55,10 @@ body {
     min-height: 100vh;
     color: var(--color-text);
     background: var(--color-background);
-    transition:
-        color 0.5s,
+    transition: color 0.5s,
         background-color 0.5s;
     line-height: 1.6;
-    font-family:
-        Inter,
+    font-family: Inter,
         -apple-system,
         BlinkMacSystemFont,
         'Segoe UI',
@@ -76,22 +74,4 @@ body {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-#app {
-    min-height: 100vh;
-    flex-direction: column;
-    display: flex;
-}
-
-.disable-user-select {
-    /* Firefox */
-    -moz-user-select: none;
-    /* Chrome , Safari*/
-    -webkit-user-select: none;
-    /* IE10 */
-    -ms-user-select: none;
-    /* 古早瀏覽器 */
-    -khtml-user-select: none;
-    user-select: none;
 }
