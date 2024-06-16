@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <main>
+  <main @contextmenu="menuToggle">
     <!-- side menu -->
     <div>
       <button class="side-menu"> ||| </button>
@@ -11,18 +11,36 @@
 
     <RouterView />
 
-    <!-- bottom tool  -->
-    <div class="tool-bar">
-      <button> Create New Space </button>
-      <button> Create New Grid </button>
-      <button> Export Grid </button>
-    </div>
+    <!-- global popup -->
+    <ContextMenu v-if="showContextMenu" :closeMenu=hideMenu :menuPositions="menuPositions" :items="contextMenuItems" />
 
   </main>
 </template>
 
 <script setup lang="ts">
   import { RouterView } from 'vue-router'
+  import ContextMenu from '@/components/ContextMenu.vue'
+  import { useContextMenu } from '@/composables/useContextMenu';
+  import { contextMenuStore } from '@/stores/contextMenuStore';
+  import { storeToRefs } from 'pinia';
+  const { hideMenu, showMenu } = useContextMenu();
+  const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
+
+  const contextMenuItems = [
+    { label: 'Create New Grid', action: () => console.log('Option 1 clicked') },
+    { label: 'Option 2', action: () => console.log('Option 2 clicked') },
+  ];
+
+  const menuToggle = (e: MouseEvent) => {
+    e.preventDefault();
+
+    if (showContextMenu.value && e.button === 0) {
+        hideMenu();
+        return
+    }
+
+    showMenu(e.clientX, e.clientY);
+}
 </script>
 
 <style scoped>
@@ -36,21 +54,5 @@ main {
   position: absolute;
   top: 0;
   left: 0;
-}
-
-.tool-bar {
-  justify-content: center;
-  display: flex;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
-  bottom: 0;
-  margin: 16px;
-
-  button {
-    margin: 8px;
-    border: 0;
-  }
 }
 </style>

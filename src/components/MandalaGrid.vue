@@ -1,7 +1,6 @@
 <template>
-    <div @contextmenu="menuToggle" @mousedown="(e) => handleMousedown(e, gridElement)" @mousemove="handleMouseMove"
-        @mouseup="handleMouseUp" ref="gridElement" class="grid-container"
-        :style="{ left: `${locate.x}px`, top: `${locate.y}px` }">
+    <div @mousedown="(e) => handleMousedown(e, gridElement)" @mousemove="handleMouseMove" @mouseup="handleMouseUp"
+        ref="gridElement" class="grid-container" :style="{ left: `${locate.x}px`, top: `${locate.y}px` }">
         <MandalaNode @focusNextNode="focusNextNode(index)" :focus="focusTarget === index" :node="node"
             v-for="(node, index) in nodes" :key="index"
             :style="`grid-column: ${gridLayout[index].col}; grid-row:${gridLayout[index].row};`">
@@ -14,16 +13,12 @@
 import type { iMandalaGrid } from '@/core/MandalaGrid'
 import { computed, onMounted, ref } from 'vue';
 import { useMouseDrag } from '@/composables/useMouseDrag'
-import { useContextMenu } from '@/composables/useContextMenu';
 import MandalaNode from '@/components/MandalaNode.vue';
-import { storeToRefs } from 'pinia';
-import { contextMenuStore } from '@/stores/contextMenuStore';
+
 const { grid, container } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null }>();
 const gridElement = ref<HTMLElement | null>(null);
 const focusTarget = ref<number | null>(null)
 
-const { hideMenu, showMenu } = useContextMenu();
-const { showContextMenu } = storeToRefs(contextMenuStore());
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
 
 const gridLayout = [
@@ -38,16 +33,7 @@ const gridLayout = [
     { col: 3, row: 1 }  // 右上
 ]
 
-const menuToggle = (e: MouseEvent) => {
-    e.preventDefault();
 
-    if (showContextMenu.value && e.button === 0) {
-        hideMenu();
-        return
-    }
-
-    showMenu(e.clientX, e.clientY);
-}
 
 const focusNextNode = (index: number) => {
     focusTarget.value = index + 1;

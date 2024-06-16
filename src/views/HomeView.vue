@@ -1,33 +1,25 @@
 <template>
   <div ref="space" class="space-container">
-    <MandalaGrid :container="space" ref="childComponentRef" :grid="rootGrid" class="drag-element" />
-    <MandalaGrid :container="space" ref="childComponentRef" :grid="rootGrid" class="drag-element" />
+    <MandalaGrid v-for="grid in gridList" :key="grid.uid" :container="space" ref="childComponentRef" :grid="grid"
+      class="drag-element" />
   </div>
-
-  <ContextMenu v-if="showContextMenu" :closeMenu=hideMenu :menuPositions="menuPositions" :container="space"
-    :items="contextMenuItems" />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import MandalaGrid from '@/components/MandalaGrid.vue';
-import ContextMenu from '@/components/ContextMenu.vue'
-import { useMandalaGridGrid } from '@/composables/useMandalaGrid'
-import { contextMenuStore } from '@/stores/contextMenuStore';
+import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useContextMenu } from '@/composables/useContextMenu';
+import MandalaGrid from '@/components/MandalaGrid.vue';
+import { useMandalaGrid } from '@/composables/useMandalaGrid'
+import { useMandalaGridStore } from '@/stores/gridStore';
 
-const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
-const { hideMenu } = useContextMenu();
-
-const contextMenuItems = [
-  { label: 'Option 1', action: () => console.log('Option 1 clicked') },
-  { label: 'Option 2', action: () => console.log('Option 2 clicked') },
-];
-
-const { rootGrid } = useMandalaGridGrid();
+const { gridList } = storeToRefs(useMandalaGridStore());
+const { setInitGridData } = useMandalaGrid();
 const childComponentRef = ref<HTMLElement | null>(null);
 const space = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+  setInitGridData();
+});
 
 </script>
 
