@@ -34,6 +34,11 @@ export const useMouseDrag = () => {
    * @param dragElement number
    */
   function handleMousedown(e: MouseEvent, dragElement: HTMLElement | null) {
+    // only left click can drag
+    if (e.button !== 0) {
+      return;
+    }
+
     setupMouseControlEventsInWindow();
     drag.value = true
 

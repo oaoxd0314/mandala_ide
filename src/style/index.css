@@ -1,0 +1,27 @@
+@import './base.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#app {
+    min-height: 100vh;
+    flex-direction: column;
+    display: flex;
+}
+
+.disable-user-select {
+    /* Firefox */
+    -moz-user-select: none;
+    /* Chrome , Safari*/
+    -webkit-user-select: none;
+    /* IE10 */
+    -ms-user-select: none;
+    /* 古早瀏覽器 */
+    -khtml-user-select: none;
+    user-select: none;
+}
