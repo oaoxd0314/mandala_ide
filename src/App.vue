@@ -1,6 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <main @contextmenu="menuToggle">
     <!-- side menu -->
@@ -18,28 +15,28 @@
 </template>
 
 <script setup lang="ts">
-  import { RouterView } from 'vue-router'
-  import ContextMenu from '@/components/ContextMenu.vue'
-  import { useContextMenu } from '@/composables/useContextMenu';
-  import { contextMenuStore } from '@/stores/contextMenuStore';
-  import { storeToRefs } from 'pinia';
-  const { hideMenu, showMenu } = useContextMenu();
-  const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
+import { RouterView } from 'vue-router'
+import ContextMenu from '@/components/ContextMenu.vue'
+import { useContextMenu } from '@/composables/useContextMenu';
+import { contextMenuStore } from '@/stores/contextMenuStore';
+import { storeToRefs } from 'pinia';
+const { hideMenu, showMenu } = useContextMenu();
+const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
 
-  const contextMenuItems = [
-    { label: 'Create New Grid', action: () => console.log('Option 1 clicked') },
-    { label: 'Option 2', action: () => console.log('Option 2 clicked') },
-  ];
+const contextMenuItems = [
+  { label: 'Create New Grid', action: () => console.log('Option 1 clicked') },
+  { label: 'Option 2', action: () => console.log('Option 2 clicked') },
+];
 
-  const menuToggle = (e: MouseEvent) => {
-    e.preventDefault();
+const menuToggle = (e: MouseEvent) => {
+  e.preventDefault();
 
-    if (showContextMenu.value && e.button === 0) {
-        hideMenu();
-        return
-    }
+  if (showContextMenu.value && e.button === 0) {
+    hideMenu();
+    return
+  }
 
-    showMenu(e.clientX, e.clientY);
+  showMenu(e.clientX, e.clientY);
 }
 </script>
 
