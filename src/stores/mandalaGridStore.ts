@@ -4,9 +4,9 @@ import type { MandalaGrid } from '@/core/MandalaGrid';
 
 export const useMandalaGridStore = defineStore('mandalaGrid', () => {
 
-    const gridList = ref<MandalaGrid[]>([])
+    const gridList = ref<MandalaGrid[]>([]);
 
     return {
         gridList
-    }
-})
+    };
+});

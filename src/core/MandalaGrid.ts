@@ -28,12 +28,12 @@ export class MandalaGrid implements iMandalaGrid {
 
         if (this.type === "Exploratory") {
             const exploreNodes = Array(8).fill(null).map(() => new MandalaNode());
-            this.rootNode.children = exploreNodes
+            this.rootNode.children = exploreNodes;
         }
 
 
         if (this.type === "Sequential") {
-            this.appendChildSequential(this.rootNode, 8)
+            this.appendChildSequential(this.rootNode, 8);
         }
     }
 

@@ -1,22 +1,28 @@
 <template>
-  <main @contextmenu="menuToggle">
-    <!-- side menu -->
-    <div>
-      <button class="side-menu"> ||| </button>
-    </div>
+    <main @contextmenu="menuToggle">
+        <!-- side menu -->
+        <div>
+            <button class="side-menu">
+                |||
+            </button>
+        </div>
 
 
-    <RouterView />
+        <RouterView />
 
-    <!-- global popup -->
-    <ContextMenu v-if="showContextMenu" :closeMenu=hideMenu :menuPositions="menuPositions" :items="contextMenuItems" />
-
-  </main>
+        <!-- global popup -->
+        <ContextMenu
+            v-if="showContextMenu"
+            :close-menu="hideMenu"
+            :menu-positions="menuPositions"
+            :items="contextMenuItems"
+        />
+    </main>
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import ContextMenu from '@/components/ContextMenu.vue'
+import { RouterView } from 'vue-router';
+import ContextMenu from '@/components/ContextMenu.vue';
 import { useContextMenu } from '@/composables/useContextMenu';
 import { contextMenuStore } from '@/stores/contextMenuStore';
 import { storeToRefs } from 'pinia';
@@ -33,11 +39,11 @@ const menuToggle = (e: MouseEvent) => {
 
   if (showContextMenu.value && e.button === 0) {
     hideMenu();
-    return
+    return;
   }
 
   showMenu(e.clientX, e.clientY);
-}
+};
 </script>
 
 <style scoped>

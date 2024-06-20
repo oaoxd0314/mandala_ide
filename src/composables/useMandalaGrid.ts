@@ -1,6 +1,6 @@
 import { MandalaGrid } from '@/core/MandalaGrid';
 import type { MandalaNode } from '@/core/MandalaNode';
-import { useMandalaGridStore } from '@/stores/gridStore';
+import { useMandalaGridStore } from '@/stores/mandalaGridStore';
 
 export const useMandalaGrid = () => {
     const mandalaGridStore = useMandalaGridStore();
@@ -13,30 +13,31 @@ export const useMandalaGrid = () => {
             gridList = storedData;
         }
 
-        mandalaGridStore.gridList = gridList
-    }
+        mandalaGridStore.gridList = gridList;
+    };
 
     // TODO: Implement this function
     const getLocalStorageGridData = () => {
-        return []
-    }
+        return [];
+    };
 
     const createSequentialGrid = (): MandalaGrid => {
         return new MandalaGrid('Sequential');
-    }
+    };
 
     const createExploratoryGrid = (): MandalaGrid => {
         return new MandalaGrid('Exploratory');
-    }
-    // TODO: Implement this function
+    };
+    // TODO: Implement this function and remove below block
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const findGridByNode = (node: MandalaNode): MandalaGrid | null => {
         return null;
-    }
+    };
 
     return {
         findGridByNode,
         setInitGridData,
         createSequentialGrid,
         createExploratoryGrid
-    }
-}
+    };
+};

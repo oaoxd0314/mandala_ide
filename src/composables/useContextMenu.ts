@@ -9,16 +9,16 @@ export const useContextMenu = () => {
         menuPositions.value = {
             x: x,
             y: y
-        }
-    }
+        };
+    };
 
     const hideMenu = () => {
-        menuPositions.value = { x: 0, y: 0 }
+        menuPositions.value = { x: 0, y: 0 };
         showContextMenu.value = false;
-    }
+    };
 
     return {
         showMenu,
         hideMenu,
     };
-}
+};
