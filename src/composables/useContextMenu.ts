@@ -1,8 +1,8 @@
 import { storeToRefs } from 'pinia';
-import { contextMenuStore } from '@/stores/contextMenuStore';
+import { useContextMenuStore } from '@/stores/contextMenuStore';
 
 export const useContextMenu = () => {
-    const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
+    const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
 
     const showMenu = (x: number, y: number) => {
         showContextMenu.value = true;

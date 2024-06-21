@@ -1,13 +1,5 @@
 <template>
     <main @contextmenu="menuToggle">
-        <!-- side menu -->
-        <div>
-            <button class="side-menu">
-                |||
-            </button>
-        </div>
-
-
         <RouterView />
 
         <!-- global popup -->
@@ -24,20 +16,33 @@
 import { RouterView } from 'vue-router';
 import ContextMenu from '@/components/ContextMenu.vue';
 import { useContextMenu } from '@/composables/useContextMenu';
-import { contextMenuStore } from '@/stores/contextMenuStore';
+import { useContextMenuStore } from '@/stores/contextMenuStore';
 import { storeToRefs } from 'pinia';
+import { useElementFocusStore } from './stores/elementFocusStore';
+import { useMandalaGrid } from './composables/useMandalaGrid';
 const { hideMenu, showMenu } = useContextMenu();
-const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
+const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
+const { focusElement } = storeToRefs(useElementFocusStore());
+const { appendNewGrid } = useMandalaGrid();
 
 const contextMenuItems = [
-  { label: 'Create New Grid', action: () => console.log('Option 1 clicked') },
-  { label: 'Option 2', action: () => console.log('Option 2 clicked') },
+  { label: 'Create New Grid', action: ()=>{
+    appendNewGrid();
+  } },
 ];
 
 const menuToggle = (e: MouseEvent) => {
   e.preventDefault();
 
-  if (showContextMenu.value && e.button === 0) {
+  // it's mean , if focusElement exist then 
+  // 1. reset menu 
+  // 2. don't care following code
+  if (focusElement.value) {
+    hideMenu();
+    return;
+  }
+
+  if (showContextMenu.value && e.button === 0 || focusElement.value) {
     hideMenu();
     return;
   }
