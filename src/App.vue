@@ -26,9 +26,9 @@ const { focusElement } = storeToRefs(useElementFocusStore());
 const { appendNewGrid } = useMandalaGrid();
 
 const contextMenuItems = [
-  { label: 'Create New Grid', action: ()=>{
-    appendNewGrid();
-  } },
+  { label: 'Create New Grid', action: (e:MouseEvent)=>{
+    appendNewGrid({top: e.clientY, left: e.clientX});
+  }},
 ];
 
 const menuToggle = (e: MouseEvent) => {
