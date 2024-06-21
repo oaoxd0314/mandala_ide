@@ -4,11 +4,12 @@
         class="space-container"
     >
         <MandalaGrid
-            v-for="grid in gridList"
-            :key="grid.uid"
+            v-for="gridComponent in gridComponentList"
+            :key="gridComponent.grid.uid"
             ref="childComponentRef"
             :container="space"
-            :grid="grid"
+            :grid="gridComponent.grid"
+            :grid-layout="gridComponent.layout"
             class="drag-element"
         />
     </div>
@@ -21,7 +22,7 @@ import MandalaGrid from '@/components/MandalaGrid.vue';
 import { useMandalaGrid } from '@/composables/useMandalaGrid';
 import { useMandalaGridStore } from '@/stores/mandalaGridStore';
 
-const { gridList } = storeToRefs(useMandalaGridStore());
+const { gridComponentList } = storeToRefs(useMandalaGridStore());
 const { setInitGridData } = useMandalaGrid();
 const childComponentRef = ref<HTMLElement | null>(null);
 const space = ref<HTMLElement | null>(null);

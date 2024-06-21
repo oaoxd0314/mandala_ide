@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { MandalaGrid } from '@/core/MandalaGrid';
+import type { MandalaGridComponent } from '@/composables/useMandalaGrid';
+
 
 export const useMandalaGridStore = defineStore('mandalaGrid', () => {
 
-    const gridList = ref<MandalaGrid[]>([]);
+    const gridComponentList = ref<MandalaGridComponent[]>([]);
 
     return {
-        gridList
+        gridComponentList
     };
 });

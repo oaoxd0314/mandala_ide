@@ -12,7 +12,7 @@
             :key="index"
             :focus="focusTarget === index"
             :node="node"
-            :style="`grid-column: ${gridLayout[index].col}; grid-row:${gridLayout[index].row};`"
+            :style="`grid-column: ${NodeLayout[index].col}; grid-row:${NodeLayout[index].row};`"
             @focus-next-node="focusNextNode(index)"
         >
             {{ index }}
@@ -21,18 +21,19 @@
 </template>
 
 <script setup lang="ts">
-import type { iMandalaGrid } from '@/core/MandalaGrid';
 import { computed, onMounted, ref } from 'vue';
 import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
+import { type MandalaGridComponent } from '@/composables/useMandalaGrid';
+import type { iMandalaGrid } from '@/core/MandalaGrid';
 
-const { grid, container } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null }>();
+const { grid, container, gridLayout } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null, gridLayout:MandalaGridComponent['layout'] }>();
 const gridElement = ref<HTMLElement | null>(null);
 const focusTarget = ref<number | null>(null);
 
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
 
-const gridLayout = [
+const NodeLayout = [
     { col: 2, row: 2 }, // 中間
     { col: 3, row: 2 }, // 右中
     { col: 3, row: 3 }, // 右下
@@ -57,6 +58,11 @@ const nodes = computed(() => {
 });
 
 onMounted(() => {
+    if(gridLayout){
+        setInitLocate(gridLayout.top, gridLayout.left);
+        return;
+    }
+
     if (container && gridElement.value) {
         const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
         const elOffsetHeight = gridElement.value.offsetHeight ?? 0;

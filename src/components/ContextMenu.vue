@@ -19,11 +19,11 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-
 const props = defineProps<{
     items: Array<{
         label: string,
-        action: () => void
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        action: (arg: any) => void;
     }>,
     closeMenu: () => void
     menuPositions: { x: number, y: number }
