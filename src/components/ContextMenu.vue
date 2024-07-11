@@ -1,6 +1,6 @@
 <template>
     <div
-        class=" absolute z-10 bg-gray-700 opacity-0.5 rounded"
+        class=" absolute z-10 bg-gray-700 opacity-0.5 rounded text-slate-200"
         :style="{ top: props.menuPositions.y + 'px', left: props.menuPositions.x + 'px' }"
         @click="closeMenu"
     >
