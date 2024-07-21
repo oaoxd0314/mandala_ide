@@ -10,10 +10,8 @@
         <MandalaNode
             v-for="(node, index) in nodes"
             :key="index"
-            :focus="focusTarget === index"
             :node="node"
             :style="`grid-column: ${NodeLayout[index].col}; grid-row:${NodeLayout[index].row};`"
-            @focus-next-node="focusNextNode(index)"
         >
             {{ index }}
         </MandalaNode>
@@ -29,8 +27,6 @@ import type { iMandalaGrid } from '@/core/MandalaGrid';
 
 const { grid, container, gridLayout } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null, gridLayout:MandalaGridComponent['layout'] }>();
 const gridElement = ref<HTMLElement | null>(null);
-const focusTarget = ref<number | null>(null);
-
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
 
 const NodeLayout = [
@@ -46,10 +42,6 @@ const NodeLayout = [
 ];
 
 
-
-const focusNextNode = (index: number) => {
-    focusTarget.value = index + 1;
-};
 
 const nodes = computed(() => {
     const root = grid.rootNode;
