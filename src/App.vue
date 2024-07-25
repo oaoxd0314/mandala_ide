@@ -19,17 +19,29 @@ import { useContextMenu } from '@/composables/useContextMenu';
 import { useContextMenuStore } from '@/stores/contextMenuStore';
 import { storeToRefs } from 'pinia';
 import { useElementFocusStore } from './stores/elementFocusStore';
+import { useGridComponentStore } from './stores/gridComponentStore';
 import { useMandalaGrid } from './composables/useMandalaGrid';
+import { MandalaGrid } from './core/MandalaGrid';
 const { hideMenu, showMenu } = useContextMenu();
 const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
 const { focusElement } = storeToRefs(useElementFocusStore());
-const { appendNewGrid } = useMandalaGrid();
+const gridComponentStore = useGridComponentStore();
+const { createGridComponent } = useMandalaGrid();
 
 const contextMenuItems = [
-  { label: 'Create New Grid', action: (e:MouseEvent)=>{
-    appendNewGrid({top: e.clientY, left: e.clientX});
-  }},
+  { 
+    label: 'Create New Grid', 
+    action: (e:MouseEvent)=> appendNewGridComponent(e)
+  },
 ];
+
+const appendNewGridComponent = (e: MouseEvent) => {
+  const layout = { top: e.clientY, left: e.clientX };
+  const newGrid = new MandalaGrid('Exploratory');  
+
+  const newGridComponent = createGridComponent(newGrid, layout);
+  gridComponentStore.gridComponentList.push(newGridComponent);
+};
 
 const menuToggle = (e: MouseEvent) => {
   e.preventDefault();

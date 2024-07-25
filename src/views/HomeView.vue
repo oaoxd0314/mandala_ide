@@ -5,7 +5,7 @@
     >
         <MandalaGrid
             v-for="gridComponent in gridComponentList"
-            :key="gridComponent.grid.uid"
+            :key="gridComponent.grid.girdId"
             ref="childComponentRef"
             :container="space"
             :grid="gridComponent.grid"
@@ -20,15 +20,17 @@ import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import MandalaGrid from '@/components/MandalaGrid.vue';
 import { useMandalaGrid } from '@/composables/useMandalaGrid';
-import { useMandalaGridStore } from '@/stores/mandalaGridStore';
+import { useGridComponentStore } from '@/stores/gridComponentStore';
 
-const { gridComponentList } = storeToRefs(useMandalaGridStore());
+const { gridComponentList } = storeToRefs(useGridComponentStore());
 const { setInitGridData } = useMandalaGrid();
 const childComponentRef = ref<HTMLElement | null>(null);
 const space = ref<HTMLElement | null>(null);
 
 onMounted(() => {
-  setInitGridData();
+  if(gridComponentList.value.length === 0) {
+    setInitGridData();
+  }
 });
 
 </script>

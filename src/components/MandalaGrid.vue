@@ -1,17 +1,27 @@
 <template>
     <div
         ref="gridElement"
-        class="grid-container"
+        class="grid grid-cols-3 grid-rows-3 gap-5 justify-center px-4 py-4 "
+        :class="{
+            ['shadow-highlight-primary']: grid.girdId === focusTargetId,
+        }"
         :style="{ left: `${locate.x}px`, top: `${locate.y}px` }"
+        @focusout="handleBlur"
+        @click="(e:MouseEvent) => handleClick(e, grid.girdId)"
         @mousedown="(e) => handleMousedown(e, gridElement)"
         @mousemove="handleMouseMove"
         @mouseup="handleMouseUp"
     >
         <MandalaNode
             v-for="(node, index) in nodes"
-            :key="index"
+            :key="node.id"
             :node="node"
+            :is-focus="node.id === focusTargetId"
+            :will-focus-next="isNodeWillFocusNext(node)"
+            class="w-[100px] h-[100px]"
             :style="`grid-column: ${NodeLayout[index].col}; grid-row:${NodeLayout[index].row};`"
+            @click="(e:MouseEvent) => handleClick(e, node.id)"
+            @keydown="(e:KeyboardEvent)=>handleKeyDown(e, node.id)"
         >
             {{ index }}
         </MandalaNode>
@@ -19,15 +29,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
-import { type MandalaGridComponent } from '@/composables/useMandalaGrid';
-import type { iMandalaGrid } from '@/core/MandalaGrid';
+import { useMandalaGrid, type GridComponent } from '@/composables/useMandalaGrid';
+import type { MandalaGrid } from '@/core/MandalaGrid';
+import type { MandalaNode as iMandalaNode } from '@/core/MandalaNode';
+import { GRID_TYPE } from '@/constant';
 
-const { grid, container, gridLayout } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null, gridLayout:MandalaGridComponent['layout'] }>();
-const gridElement = ref<HTMLElement | null>(null);
+const { grid, container, gridLayout } = defineProps<{ grid: MandalaGrid, container: HTMLElement | null, gridLayout:GridComponent['layout'] }>();
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
+const { extractNodeIndex } = useMandalaGrid();
+const focusTargetId = ref<string | null>(null);
+const gridElement = ref<HTMLElement | null>(null);
+
+const nodes = computed(() => {
+    const root = grid.rootNode;
+    return [root, ...root.children];
+});
+
+
+
+watch(focusTargetId,(val)=>{
+    console.log(val);
+});
 
 const NodeLayout = [
     { col: 2, row: 2 }, // 中間
@@ -42,12 +67,58 @@ const NodeLayout = [
 ];
 
 
+const handleKeyDown = (e: KeyboardEvent, targetId: string) => {
+    if (e.key === 'Tab') {
+        focusTargetId.value = targetId;
+    }
+};
 
-const nodes = computed(() => {
-    const root = grid.rootNode;
+const handleBlur = () => {
+    focusTargetId.value = null;
+};
 
-    return [root, ...root.children];
-});
+const handleClick = (e: MouseEvent, targetId: string) => {
+    if(focusTargetId.value){
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+
+    focusTargetId.value = targetId;
+};
+
+/**
+ * TODO: complete me
+ */
+const isNodeWillFocusNext = (node: iMandalaNode) => {
+    if(!focusTargetId.value){
+        return false;
+    }
+
+    if(node.id === grid.rootNode.id){
+        return false;
+    }
+    
+    const namespace = grid.girdId;
+    const nodeIndex = extractNodeIndex(namespace, node.id);
+    const focusNodeIndex = extractNodeIndex(namespace, focusTargetId.value);
+
+    if(!nodeIndex || !focusNodeIndex){
+        return false;
+    }
+
+    if(grid.type === GRID_TYPE.EXPLORATORY ){
+        return true;
+    }
+
+    if(nodeIndex + 1 === focusNodeIndex){
+        return true;
+    }   
+
+    return false;
+};
+
+
 
 onMounted(() => {
     if(gridLayout){
@@ -65,13 +136,3 @@ onMounted(() => {
     }
 });
 </script>
-
-<style scoped>
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 10px;
-    justify-content: center;
-}
-</style>

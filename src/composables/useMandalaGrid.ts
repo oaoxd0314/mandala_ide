@@ -1,10 +1,13 @@
 import { MandalaGrid } from '@/core/MandalaGrid';
 import type { MandalaNode } from '@/core/MandalaNode';
-import { useMandalaGridStore } from '@/stores/mandalaGridStore';
-import { GRID_TYPE } from '@/constant';
+import { useGridComponentStore } from '@/stores/gridComponentStore';
 
-
-export type MandalaGridComponent = {
+/**
+ * A data structure to render a Mandala Grid
+ * 
+ * @description 
+ */
+export type GridComponent = {
     grid: MandalaGrid;
     layout: {
         top: number;
@@ -13,29 +16,35 @@ export type MandalaGridComponent = {
 };
 
 export const useMandalaGrid = () => {
-    const mandalaGridStore = useMandalaGridStore();
+    const gridComponentStore = useGridComponentStore();
 
     const setInitGridData = () => {
         const storedData = _getLocalStorageGridData();
 
         if (storedData.length > 0) {
-            mandalaGridStore.gridComponentList = storedData;
+            gridComponentStore.gridComponentList = storedData;
         }
 
-        appendNewGrid();
+        const newGrid: MandalaGrid = new MandalaGrid('Exploratory');
+
+        const newGridComponent = createGridComponent(newGrid, null);
+
+        gridComponentStore.gridComponentList.push(newGridComponent);
     };
 
-    const appendNewGrid = (layout: MandalaGridComponent['layout'] = null, type: typeof GRID_TYPE[keyof typeof GRID_TYPE] = GRID_TYPE.EXPLORATORY) => {
-        let newGrid: MandalaGrid = new MandalaGrid('Exploratory');;
+    /**
+     * 解析 node id，取得 node 在 grid 中的 index
+     */
+    const extractNodeIndex = (namespace:string ,id:string) =>{
+        const separatorIndex = id.indexOf("-", namespace.length);
 
-        if (type === GRID_TYPE.SEQUENTIAL) {
-            newGrid = new MandalaGrid('Sequential');
-        }
-
-        const newGridComponent = _createNewGrid(newGrid, layout);
-
-        mandalaGridStore.gridComponentList.push(newGridComponent);
+        if (separatorIndex !== -1) {
+        return Number(id.slice(separatorIndex + 1));
+    }
+    
+    return null;
     };
+
 
     // TODO: Implement this function and remove below block
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -48,7 +57,10 @@ export const useMandalaGrid = () => {
         return [];
     };
 
-    const _createNewGrid = (grid: MandalaGrid, layout: MandalaGridComponent['layout']) => {
+    /**
+     * transform MandalaGrid to GridComponent (Grid + Layout)
+     */
+    const createGridComponent = (grid: MandalaGrid, layout: GridComponent['layout']) => {
         return {
             grid,
             layout
@@ -56,8 +68,9 @@ export const useMandalaGrid = () => {
     };
 
     return {
+        extractNodeIndex,
         findGridByNode,
-        appendNewGrid,
         setInitGridData,
+        createGridComponent
     };
 };
