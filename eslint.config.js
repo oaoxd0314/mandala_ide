@@ -2,12 +2,18 @@ import js from "@eslint/js";
 import pluginVue from 'eslint-plugin-vue';
 import tseslint from 'typescript-eslint';
 import vueESLintParser from 'vue-eslint-parser';
+import stylisticTs from '@stylistic/eslint-plugin-ts';
+import stylisticJsx from '@stylistic/eslint-plugin-jsx';
 
 export default [
   js.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   ...tseslint.configs.recommended,
   {
+    "plugins":{
+      '@stylistic/ts': stylisticTs,
+      '@stylistic/jsx': stylisticJsx
+    },
     "languageOptions": {
       "globals": {
         "define": false,
