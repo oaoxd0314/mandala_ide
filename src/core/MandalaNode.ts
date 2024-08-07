@@ -1,20 +1,37 @@
 
-export interface iMandalaNode {
-    title: string;
-    content: string;
-    children: MandalaNode[];
-    updateTitle(newTitle: string): void;
-}
+/**
+ *  Responsibility: manage the node's properties and data storage
+ */
+export class MandalaNode  {
+    title: string = '';
+    content: string = '';
+    private _id: string;
+    private _parent: MandalaNode | null = null;
+    private _children: MandalaNode[] = [];
 
-export class MandalaNode implements iMandalaNode {
-    title: string;
-    content: string;
-    children: MandalaNode[];
+    constructor(namespace: string, index: number, parent: MandalaNode | null = null) {
+        this._id = `${namespace}-${index}`;
+        this._parent = parent;
+    }
 
-    constructor(title: string = '', content: string = '') {
-        this.title = title;
-        this.content = content;
-        this.children = [];
+    get children(): MandalaNode[] {
+        return this._children;
+    }
+
+    get id(): string {
+        return this._id;
+    }
+
+    get parent(): MandalaNode | null {
+        return this._parent;
+    }
+
+    updateChildren(children: MandalaNode[] = []) {
+        this.children.push(...children);
+    }
+
+    hasChildren(): boolean {
+        return this.children.length > 0;
     }
 
     updateTitle(newTitle: string): void {
@@ -25,9 +42,4 @@ export class MandalaNode implements iMandalaNode {
         this.content = newContent;
     }
 
-    hasChildren(): boolean {
-        return this.children.length > 0;
-    }
-
-    // TODO: know the position of the grid
 }

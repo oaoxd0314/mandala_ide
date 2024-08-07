@@ -1,24 +1,36 @@
 <template>
-  <div ref="space" class="space-container">
-    <MandalaGrid v-for="grid in gridList" :key="grid.uid" :container="space" ref="childComponentRef" :grid="grid"
-      class="drag-element" />
-  </div>
+    <div
+        ref="space"
+        class="space-container"
+    >
+        <MandalaGrid
+            v-for="gridComponent in gridComponentList"
+            :key="gridComponent.grid.girdId"
+            ref="childComponentRef"
+            :container="space"
+            :grid="gridComponent.grid"
+            :grid-layout="gridComponent.layout"
+            class="drag-element"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import MandalaGrid from '@/components/MandalaGrid.vue';
-import { useMandalaGrid } from '@/composables/useMandalaGrid'
-import { useMandalaGridStore } from '@/stores/gridStore';
+import { useMandalaGrid } from '@/composables/useMandalaGrid';
+import { useGridComponentStore } from '@/stores/gridComponentStore';
 
-const { gridList } = storeToRefs(useMandalaGridStore());
+const { gridComponentList } = storeToRefs(useGridComponentStore());
 const { setInitGridData } = useMandalaGrid();
 const childComponentRef = ref<HTMLElement | null>(null);
 const space = ref<HTMLElement | null>(null);
 
 onMounted(() => {
-  setInitGridData();
+  if(gridComponentList.value.length === 0) {
+    setInitGridData();
+  }
 });
 
 </script>

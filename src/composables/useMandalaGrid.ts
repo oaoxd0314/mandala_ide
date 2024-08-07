@@ -1,42 +1,76 @@
 import { MandalaGrid } from '@/core/MandalaGrid';
 import type { MandalaNode } from '@/core/MandalaNode';
-import { useMandalaGridStore } from '@/stores/gridStore';
+import { useGridComponentStore } from '@/stores/gridComponentStore';
+
+/**
+ * A data structure to render a Mandala Grid
+ * 
+ * @description 
+ */
+export type GridComponent = {
+    grid: MandalaGrid;
+    layout: {
+        top: number;
+        left: number;
+    } | null;
+};
 
 export const useMandalaGrid = () => {
-    const mandalaGridStore = useMandalaGridStore();
+    const gridComponentStore = useGridComponentStore();
 
     const setInitGridData = () => {
-        const storedData = getLocalStorageGridData();
-        let gridList: MandalaGrid[] = [createExploratoryGrid()];
+        const storedData = _getLocalStorageGridData();
 
         if (storedData.length > 0) {
-            gridList = storedData;
+            gridComponentStore.gridComponentList = storedData;
         }
 
-        mandalaGridStore.gridList = gridList
-    }
+        const newGrid: MandalaGrid = new MandalaGrid('Exploratory');
 
-    // TODO: Implement this function
-    const getLocalStorageGridData = () => {
-        return []
-    }
+        const newGridComponent = createGridComponent(newGrid, null);
 
-    const createSequentialGrid = (): MandalaGrid => {
-        return new MandalaGrid('Sequential');
-    }
+        gridComponentStore.gridComponentList.push(newGridComponent);
+    };
 
-    const createExploratoryGrid = (): MandalaGrid => {
-        return new MandalaGrid('Exploratory');
+    /**
+     * 解析 node id，取得 node 在 grid 中的 index
+     */
+    const extractNodeIndex = (namespace:string ,id:string) =>{
+        const separatorIndex = id.indexOf("-", namespace.length);
+
+        if (separatorIndex !== -1) {
+        return Number(id.slice(separatorIndex + 1));
     }
-    // TODO: Implement this function
+    
+    return null;
+    };
+
+
+    // TODO: Implement this function and remove below block
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const findGridByNode = (node: MandalaNode): MandalaGrid | null => {
         return null;
-    }
+    };
+
+    // TODO: Implement this function
+    const _getLocalStorageGridData = () => {
+        return [];
+    };
+
+    /**
+     * transform MandalaGrid to GridComponent (Grid + Layout)
+     */
+    const createGridComponent = (grid: MandalaGrid, layout: GridComponent['layout']) => {
+        return {
+            grid,
+            layout
+        };
+    };
 
     return {
+        extractNodeIndex,
         findGridByNode,
         setInitGridData,
-        createSequentialGrid,
-        createExploratoryGrid
-    }
-}
+        createGridComponent
+    };
+};

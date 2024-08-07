@@ -12,19 +12,19 @@ export const useMouseDrag = () => {
   /**
    * 是否正在拖拉
    */
-  const drag = ref(false)
+  const drag = ref(false);
   /**
    * 滑鼠相對於 Drag Element 的位置
    */
-  const relativeMouseLocate = ref({ x: 0, y: 0 })
+  const relativeMouseLocate = ref({ x: 0, y: 0 });
   /**
    * Drag Element 的位置
    */
-  const locate = ref({ x: 0, y: 0 })
+  const locate = ref({ x: 0, y: 0 });
 
   function setInitLocate(top: number, left: number) {
-    locate.value.x = left
-    locate.value.y = top
+    locate.value.x = left;
+    locate.value.y = top;
   }
 
   /**
@@ -40,10 +40,10 @@ export const useMouseDrag = () => {
     }
 
     setupMouseControlEventsInWindow();
-    drag.value = true
+    drag.value = true;
 
     if (dragElement) {
-      const rect = dragElement.getBoundingClientRect()
+      const rect = dragElement.getBoundingClientRect();
       // 計算滑鼠相對於 Drag Element 的位置，以便於拖拉時不會讓 Drag Element 跳動
       relativeMouseLocate.value = {
         x: e.clientX - rect.left,
@@ -56,8 +56,8 @@ export const useMouseDrag = () => {
     if (!drag.value) {
       return;
     }
-    locate.value.x = e.clientX - relativeMouseLocate.value.x
-    locate.value.y = e.clientY - relativeMouseLocate.value.y
+    locate.value.x = e.clientX - relativeMouseLocate.value.x;
+    locate.value.y = e.clientY - relativeMouseLocate.value.y;
   }
 
   function handleMouseUp() {
@@ -66,7 +66,7 @@ export const useMouseDrag = () => {
     }
 
     removeMouseControlEventsFromWindow();
-    drag.value = false
+    drag.value = false;
   }
 
   /**
@@ -83,7 +83,7 @@ export const useMouseDrag = () => {
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mousemove', handleMouseMove);
     document.body.classList.add('disable-user-select');
-  }
+  };
 
   /**
    * 移除註冊在 window 的相關滑鼠控制事件
@@ -92,7 +92,7 @@ export const useMouseDrag = () => {
     window.removeEventListener('mouseup', handleMouseUp);
     window.removeEventListener('mousemove', handleMouseMove);
     document.body.classList.remove('disable-user-select');
-  }
+  };
 
   return {
     setInitLocate,
@@ -100,5 +100,5 @@ export const useMouseDrag = () => {
     handleMouseMove,
     handleMouseUp,
     locate
-  }
-}
+  };
+};

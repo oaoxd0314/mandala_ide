@@ -1,46 +1,66 @@
-<script setup lang="ts">
-</script>
-
 <template>
-  <main @contextmenu="menuToggle">
-    <!-- side menu -->
-    <div>
-      <button class="side-menu"> ||| </button>
-    </div>
+    <main @contextmenu="menuToggle">
+        <RouterView />
 
-
-    <RouterView />
-
-    <!-- global popup -->
-    <ContextMenu v-if="showContextMenu" :closeMenu=hideMenu :menuPositions="menuPositions" :items="contextMenuItems" />
-
-  </main>
+        <!-- global popup -->
+        <ContextMenu
+            v-if="showContextMenu"
+            :close-menu="hideMenu"
+            :menu-positions="menuPositions"
+            :items="contextMenuItems"
+        />
+    </main>
 </template>
 
 <script setup lang="ts">
-  import { RouterView } from 'vue-router'
-  import ContextMenu from '@/components/ContextMenu.vue'
-  import { useContextMenu } from '@/composables/useContextMenu';
-  import { contextMenuStore } from '@/stores/contextMenuStore';
-  import { storeToRefs } from 'pinia';
-  const { hideMenu, showMenu } = useContextMenu();
-  const { showContextMenu, menuPositions } = storeToRefs(contextMenuStore());
+import { RouterView } from 'vue-router';
+import ContextMenu from '@/components/ContextMenu.vue';
+import { useContextMenu } from '@/composables/useContextMenu';
+import { useContextMenuStore } from '@/stores/contextMenuStore';
+import { storeToRefs } from 'pinia';
+import { useElementFocusStore } from './stores/elementFocusStore';
+import { useGridComponentStore } from './stores/gridComponentStore';
+import { useMandalaGrid } from './composables/useMandalaGrid';
+import { MandalaGrid } from './core/MandalaGrid';
+const { hideMenu, showMenu } = useContextMenu();
+const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
+const { focusElement } = storeToRefs(useElementFocusStore());
+const gridComponentStore = useGridComponentStore();
+const { createGridComponent } = useMandalaGrid();
 
-  const contextMenuItems = [
-    { label: 'Create New Grid', action: () => console.log('Option 1 clicked') },
-    { label: 'Option 2', action: () => console.log('Option 2 clicked') },
-  ];
+const contextMenuItems = [
+  { 
+    label: 'Create New Grid', 
+    action: (e:MouseEvent)=> appendNewGridComponent(e)
+  },
+];
 
-  const menuToggle = (e: MouseEvent) => {
-    e.preventDefault();
+const appendNewGridComponent = (e: MouseEvent) => {
+  const layout = { top: e.clientY, left: e.clientX };
+  const newGrid = new MandalaGrid('Exploratory');  
 
-    if (showContextMenu.value && e.button === 0) {
-        hideMenu();
-        return
-    }
+  const newGridComponent = createGridComponent(newGrid, layout);
+  gridComponentStore.gridComponentList.push(newGridComponent);
+};
 
-    showMenu(e.clientX, e.clientY);
-}
+const menuToggle = (e: MouseEvent) => {
+  e.preventDefault();
+
+  // it's mean , if focusElement exist then 
+  // 1. reset menu 
+  // 2. don't care following code
+  if (focusElement.value) {
+    hideMenu();
+    return;
+  }
+
+  if (showContextMenu.value && e.button === 0 || focusElement.value) {
+    hideMenu();
+    return;
+  }
+
+  showMenu(e.clientX, e.clientY);
+};
 </script>
 
 <style scoped>

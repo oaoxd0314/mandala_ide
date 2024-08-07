@@ -1,27 +1,60 @@
 <template>
-    <div @mousedown="(e) => handleMousedown(e, gridElement)" @mousemove="handleMouseMove" @mouseup="handleMouseUp"
-        ref="gridElement" class="grid-container" :style="{ left: `${locate.x}px`, top: `${locate.y}px` }">
-        <MandalaNode @focusNextNode="focusNextNode(index)" :focus="focusTarget === index" :node="node"
-            v-for="(node, index) in nodes" :key="index"
-            :style="`grid-column: ${gridLayout[index].col}; grid-row:${gridLayout[index].row};`">
+    <div
+        ref="gridElement"
+        class="grid grid-cols-3 grid-rows-3 gap-5 justify-center px-4 py-4 "
+        :class="{
+            ['shadow-highlight-primary']: grid.girdId === focusTargetId,
+        }"
+        :style="{ left: `${locate.x}px`, top: `${locate.y}px` }"
+        @focusout="handleBlur"
+        @click="(e:MouseEvent) => handleClick(e, grid.girdId)"
+        @mousedown="(e) => handleMousedown(e, gridElement)"
+        @mousemove="handleMouseMove"
+        @mouseup="handleMouseUp"
+    >
+        <MandalaNode
+            v-for="(node, index) in nodes"
+            :key="node.id"
+            :node="node"
+            :is-focus="node.id === focusTargetId"
+            :will-focus-next="isNodeWillFocusNext(node)"
+            class="w-[100px] h-[100px]"
+            :style="`grid-column: ${NodeLayout[index].col}; grid-row:${NodeLayout[index].row};`"
+            @click="(e:MouseEvent) => handleClick(e, node.id)"
+            @keydown="(e:KeyboardEvent)=>handleKeyDown(e, node.id)"
+        >
             {{ index }}
         </MandalaNode>
     </div>
 </template>
 
 <script setup lang="ts">
-import type { iMandalaGrid } from '@/core/MandalaGrid'
-import { computed, onMounted, ref } from 'vue';
-import { useMouseDrag } from '@/composables/useMouseDrag'
+import { computed, onMounted, ref, watch } from 'vue';
+import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
+import { useMandalaGrid, type GridComponent } from '@/composables/useMandalaGrid';
+import type { MandalaGrid } from '@/core/MandalaGrid';
+import type { MandalaNode as iMandalaNode } from '@/core/MandalaNode';
+import { GRID_TYPE } from '@/constant';
 
-const { grid, container } = defineProps<{ grid: iMandalaGrid, container: HTMLElement | null }>();
-const gridElement = ref<HTMLElement | null>(null);
-const focusTarget = ref<number | null>(null)
-
+const { grid, container, gridLayout } = defineProps<{ grid: MandalaGrid, container: HTMLElement | null, gridLayout:GridComponent['layout'] }>();
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
+const { extractNodeIndex } = useMandalaGrid();
+const focusTargetId = ref<string | null>(null);
+const gridElement = ref<HTMLElement | null>(null);
 
-const gridLayout = [
+const nodes = computed(() => {
+    const root = grid.rootNode;
+    return [root, ...root.children];
+});
+
+
+
+watch(focusTargetId,(val)=>{
+    console.log(val);
+});
+
+const NodeLayout = [
     { col: 2, row: 2 }, // 中間
     { col: 3, row: 2 }, // 右中
     { col: 3, row: 3 }, // 右下
@@ -31,38 +64,75 @@ const gridLayout = [
     { col: 1, row: 1 }, // 左上
     { col: 2, row: 1 }, // 上中
     { col: 3, row: 1 }  // 右上
-]
+];
 
 
+const handleKeyDown = (e: KeyboardEvent, targetId: string) => {
+    if (e.key === 'Tab') {
+        focusTargetId.value = targetId;
+    }
+};
 
-const focusNextNode = (index: number) => {
-    focusTarget.value = index + 1;
-}
+const handleBlur = () => {
+    focusTargetId.value = null;
+};
 
-const nodes = computed(() => {
-    const root = grid.rootNode;
+const handleClick = (e: MouseEvent, targetId: string) => {
+    if(focusTargetId.value){
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
 
-    return [root, ...root.children]
-});
+    focusTargetId.value = targetId;
+};
+
+/**
+ * TODO: complete me
+ */
+const isNodeWillFocusNext = (node: iMandalaNode) => {
+    if(!focusTargetId.value){
+        return false;
+    }
+
+    if(node.id === grid.rootNode.id){
+        return false;
+    }
+    
+    const namespace = grid.girdId;
+    const nodeIndex = extractNodeIndex(namespace, node.id);
+    const focusNodeIndex = extractNodeIndex(namespace, focusTargetId.value);
+
+    if(!nodeIndex || !focusNodeIndex){
+        return false;
+    }
+
+    if(grid.type === GRID_TYPE.EXPLORATORY ){
+        return true;
+    }
+
+    if(nodeIndex + 1 === focusNodeIndex){
+        return true;
+    }   
+
+    return false;
+};
+
+
 
 onMounted(() => {
+    if(gridLayout){
+        setInitLocate(gridLayout.top, gridLayout.left);
+        return;
+    }
+
     if (container && gridElement.value) {
         const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
         const elOffsetHeight = gridElement.value.offsetHeight ?? 0;
-        const top = (container.clientHeight - elOffsetHeight) / 2
-        const left = (container.clientWidth - elOffsetWidth) / 2
+        const top = (container.clientHeight - elOffsetHeight) / 2;
+        const left = (container.clientWidth - elOffsetWidth) / 2;
 
         setInitLocate(top, left);
     }
 });
 </script>
-
-<style scoped>
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 10px;
-    justify-content: center;
-}
-</style>
