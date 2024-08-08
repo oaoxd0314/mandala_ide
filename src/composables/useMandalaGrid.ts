@@ -15,6 +15,11 @@ export type GridComponent = {
     } | null;
 };
 
+export type NodeContext = {
+    title?:  MandalaNode['title']
+    content?: MandalaNode['content']
+}
+
 export const useMandalaGrid = () => {
     const gridComponentStore = useGridComponentStore();
 
@@ -32,6 +37,15 @@ export const useMandalaGrid = () => {
         gridComponentStore.gridComponentList.push(newGridComponent);
     };
 
+    const saveNodeContext = (node:MandalaNode ,context: NodeContext) =>{
+        context.title ? node.title = context.title : null;
+        context.content ? node.content = context.content : null;
+    };
+
+    const findNodeById = (grid: MandalaGrid, targetId: string): MandalaNode | null => {
+        return grid.nodeList.find(node => node.id === targetId) ?? null;
+    };
+
     /**
      * 解析 node id，取得 node 在 grid 中的 index
      */
@@ -42,7 +56,7 @@ export const useMandalaGrid = () => {
         return Number(id.slice(separatorIndex + 1));
     }
     
-    return null;
+        return null;
     };
 
 
@@ -70,6 +84,8 @@ export const useMandalaGrid = () => {
     return {
         extractNodeIndex,
         findGridByNode,
+        findNodeById,
+        saveNodeContext,
         setInitGridData,
         createGridComponent
     };

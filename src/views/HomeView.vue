@@ -5,7 +5,7 @@
     >
         <MandalaGrid
             v-for="gridComponent in gridComponentList"
-            :key="gridComponent.grid.girdId"
+            :key="gridComponent.grid.id"
             ref="childComponentRef"
             :container="space"
             :grid="gridComponent.grid"
