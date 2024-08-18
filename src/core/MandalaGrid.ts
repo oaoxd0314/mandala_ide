@@ -16,13 +16,13 @@ const GRID_CHILD_COUNT = 8;
 export class MandalaGrid {
     
     type: MandalaGridType;
-    private _girdId: string;
+    private _id: string;
     private _rootNode: MandalaNode;
 
     constructor(type: MandalaGridType = 'Exploratory', rootNode?: MandalaNode) {
         this.type = type;
-        this._girdId = _.uniqueId('mandala-grid');
-        this._rootNode = rootNode ?? new MandalaNode(this._girdId, 0);
+        this._id = _.uniqueId('mandala-grid');
+        this._rootNode = rootNode ?? new MandalaNode(this._id, 0);
         this._initializeGrid();
     }
 
@@ -30,8 +30,12 @@ export class MandalaGrid {
         return this._rootNode;
     }
 
-    get girdId(): string {
-        return this._girdId;
+    get id(): string {
+        return this._id;
+    }
+
+    get nodeList(): MandalaNode[] {
+        return [this._rootNode, ...this._rootNode.children];
     }
 
     private _initializeGrid(): void {
