@@ -2,7 +2,7 @@
     <div
         class="bg-slate-100 text-black p-4 flex items-center justify-center rounded text-wrap overflow-hidden border-solid"
         :class="{
-            ['shadow-highlight-primary']: isFocus,
+            ['shadow-highlight-primary']: isShaking ? false : isFocus,
             ['shadow-highlight-green']: willFocusNext,
             ['shake shadow-highlight-danger']: isShaking
         }"
