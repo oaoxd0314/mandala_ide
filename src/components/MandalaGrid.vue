@@ -11,6 +11,7 @@
         @mousedown="(e) => handleMousedown(e, gridElement)"
         @mousemove="handleMouseMove"
         @mouseup="handleMouseUp"
+        @blur.capture="handleBlur"
     >
         <MandalaNode
             v-for="(node, index) in nodes"
@@ -35,6 +36,7 @@ import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
 import { useMandalaGrid, type GridComponent } from '@/composables/useMandalaGrid';
 import type { MandalaGrid } from '@/core/MandalaGrid';
+import type { MandalaNode as iMandalaNode } from '@/core/MandalaNode';
 
 const { grid, container, gridLayout } = defineProps<{ grid: MandalaGrid, container: HTMLElement | null, gridLayout: GridComponent['layout'] }>();
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
@@ -44,10 +46,27 @@ const gridElement = ref<HTMLElement | null>(null);
 const focusGridId = ref<string | null>(null);
 const focusNodeId = ref<string | null>(null);
 const shakingNode = ref<string | null>(null);
+const isPreventBlur = ref<boolean>(false);
 
 const nodes = computed(() => {
     const root = grid.rootNode;
     return [root, ...root.children];
+});
+
+onMounted(() => {
+    if (gridLayout) {
+        setInitLocate(gridLayout.top, gridLayout.left);
+        return;
+    }
+
+    if (container && gridElement.value) {
+        const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
+        const elOffsetHeight = gridElement.value.offsetHeight ?? 0;
+        const top = (container.clientHeight - elOffsetHeight) / 2;
+        const left = (container.clientWidth - elOffsetWidth) / 2;
+
+        setInitLocate(top, left);
+    }
 });
 
 const NodeLayout = [
@@ -62,18 +81,32 @@ const NodeLayout = [
     { col: 3, row: 1 }  // 右上
 ];
 
-// const handleBlur = () => {
-//     focusNodeId.value = null;
-//     focusGridId.value = null;
-// };
+const handleBlur = () => {
+    if(isPreventBlur.value) {
+        isPreventBlur.value = false;
+        return;
+    }
+    
+    focusNodeId.value = null;
+    focusGridId.value = null;
+};
 
 const handleKeyDown = (e: KeyboardEvent, targetId: string) => {
     const node = findNodeById(grid, targetId);
 
+    if (!node) {
+        return;
+    }
+    
+
     switch (e.code) {
         case 'Enter':
         case 'Tab':
-            if (!node || !node.title) {
+            if(!isLastNode(node)){
+                isPreventBlur.value = true;
+            }
+
+            if (!node.title) {
                 e.preventDefault();
                 setNodeShaking(targetId);
                 break;
@@ -117,19 +150,18 @@ const setNodeShaking = (targetId:string) =>{
     }, 500);
 };
 
-onMounted(() => {
-    if (gridLayout) {
-        setInitLocate(gridLayout.top, gridLayout.left);
-        return;
+const isLastNode = (node: iMandalaNode | null) => {
+    if(!node) {
+        return true;
     }
 
-    if (container && gridElement.value) {
-        const elOffsetWidth = gridElement.value.offsetWidth ?? 0;
-        const elOffsetHeight = gridElement.value.offsetHeight ?? 0;
-        const top = (container.clientHeight - elOffsetHeight) / 2;
-        const left = (container.clientWidth - elOffsetWidth) / 2;
+    const nodeList = node.parent?.children ?? [];
 
-        setInitLocate(top, left);
+    if(nodeList.length === 0) {
+        return true;
     }
-});
+
+    return nodeList[nodeList.length - 1].id === node.id;
+};
+
 </script>

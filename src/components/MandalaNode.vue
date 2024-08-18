@@ -24,7 +24,7 @@
                 ['text-black']: message.length > 0
             }"
         >
-            {{ message.length > 0 ? 'fake'+message : 'fake'+PLACE_HOLDER }} 
+            {{ message.length > 0 ? message : PLACE_HOLDER }} 
         </span>
     </div>
 </template>
