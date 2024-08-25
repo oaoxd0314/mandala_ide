@@ -36,7 +36,6 @@ import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
 import { useMandalaGrid, type GridComponent } from '@/composables/useMandalaGrid';
 import type { MandalaGrid } from '@/core/MandalaGrid';
-import type { MandalaNode as iMandalaNode } from '@/core/MandalaNode';
 
 const { grid, container, gridLayout } = defineProps<{ grid: MandalaGrid, container: HTMLElement | null, gridLayout: GridComponent['layout'] }>();
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
@@ -97,12 +96,12 @@ const handleKeyDown = (e: KeyboardEvent, targetId: string) => {
     if (!node) {
         return;
     }
-    
 
     switch (e.code) {
         case 'Enter':
         case 'Tab':
-            if(!isLastNode(node)){
+            // 只有最後一個 node 不需要防範失焦，其他都需要順利 focus 下一個 node
+            if(!grid.isLastNode(node)){
                 isPreventBlur.value = true;
             }
 
@@ -148,20 +147,6 @@ const setNodeShaking = (targetId:string) =>{
     setTimeout(() => {
         shakingNode.value = null;
     }, 500);
-};
-
-const isLastNode = (node: iMandalaNode | null) => {
-    if(!node) {
-        return true;
-    }
-
-    const nodeList = node.parent?.children ?? [];
-
-    if(nodeList.length === 0) {
-        return true;
-    }
-
-    return nodeList[nodeList.length - 1].id === node.id;
 };
 
 </script>

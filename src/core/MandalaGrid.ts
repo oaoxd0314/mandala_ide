@@ -38,6 +38,29 @@ export class MandalaGrid {
         return [this._rootNode, ...this._rootNode.children];
     }
 
+    public isLastNode(node: MandalaNode): boolean {
+        // 檢查 node 是否為 rootNode，直接返回 false
+        if (node === this._rootNode) {
+            return false;
+        }
+    
+        // 如果 node 沒有 parent，則認為它是孤立的，返回 true
+        const parentNode = node.parent;
+        if (!parentNode) {
+            return true;
+        }
+    
+        const siblings = parentNode.children;
+    
+        // 如果沒有兄弟節點，則認為它是最後一個節點
+        if (siblings.length === 0) {
+            return true;
+        }
+    
+        // 檢查 node 是否為兄弟節點中的最後一個
+        return siblings[siblings.length - 1].id === node.id;
+    }
+
     private _initializeGrid(): void {
         if (this._rootNode.hasChildren()) {
             return;
@@ -50,7 +73,7 @@ export class MandalaGrid {
      * add a whole layer of child nodes to the grid
      */
     private _addLayer(parentId: string) {
-        const children = Array(GRID_CHILD_COUNT).fill(null).map((_, index) => new MandalaNode(parentId, index+1, this._rootNode));
+        const children = Array(GRID_CHILD_COUNT).fill(null).map((_, index) => new MandalaNode(parentId, index, this._rootNode));
         this._rootNode.updateChildren(children);
     }
 
