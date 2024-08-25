@@ -10,7 +10,7 @@ export class MandalaNode  {
     private _children: MandalaNode[] = [];
 
     constructor(namespace: string, index: number, parent: MandalaNode | null = null) {
-        this._id = `${namespace}-${index}`;
+        this._id = `${namespace}-${index+1}`;
         this._parent = parent;
     }
 
