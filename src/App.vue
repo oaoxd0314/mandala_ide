@@ -18,10 +18,10 @@ import ContextMenu from '@/components/ContextMenu.vue';
 import { useContextMenu } from '@/composables/useContextMenu';
 import { useContextMenuStore } from '@/stores/contextMenuStore';
 import { storeToRefs } from 'pinia';
-import { useElementFocusStore } from './stores/elementFocusStore';
-import { useGridComponentStore } from './stores/gridComponentStore';
-import { useMandalaGrid } from './composables/useMandalaGrid';
-import { MandalaGrid } from './core/MandalaGrid';
+import { useElementFocusStore } from '@/stores/elementFocusStore';
+import { useGridComponentStore } from '@/stores/gridComponentStore';
+import { useMandalaGrid } from '@/composables/useMandalaGrid';
+import { MandalaGrid } from '@/core/MandalaGrid';
 const { hideMenu, showMenu } = useContextMenu();
 const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
 const { focusElement } = storeToRefs(useElementFocusStore());
@@ -43,12 +43,14 @@ const appendNewGridComponent = (e: MouseEvent) => {
   gridComponentStore.gridComponentList.push(newGridComponent);
 };
 
+/**
+ * TODO: handle node focus element 
+ */
 const menuToggle = (e: MouseEvent) => {
   e.preventDefault();
 
-  // it's mean , if focusElement exist then 
-  // 1. reset menu 
-  // 2. don't care following code
+  console.log('focusElement', focusElement.value,e);
+
   if (focusElement.value) {
     hideMenu();
     return;
