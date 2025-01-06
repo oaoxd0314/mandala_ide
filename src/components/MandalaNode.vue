@@ -34,6 +34,7 @@
 import type { MandalaNode } from  '@/core/MandalaNode';
 import {nextTick, ref, watch, type Ref} from 'vue';
 import { useMandalaGrid } from '@/composables/useMandalaGrid';
+import { useElementFocusStore } from '@/stores/elementFocusStore';
 const props = defineProps<{ 
     node: MandalaNode, 
     isFocus:boolean, 
@@ -43,10 +44,12 @@ const props = defineProps<{
 
 const { saveNodeContext } = useMandalaGrid();
 const input: Ref<HTMLElement | undefined> =  ref();
+const { setGlobalFocusElement } = useElementFocusStore();
 const message = ref(props.node.title);
 const PLACE_HOLDER = 'Type something here';
 
 watch(() => props.isFocus, (newVal) => {
+    setGlobalFocusElement(props.node.id);
     // wait till the textarea ref is ready
     nextTick(() => {
         if(newVal && input.value) {

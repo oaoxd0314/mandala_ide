@@ -2,9 +2,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useElementFocusStore = defineStore('focusElement', () => {
-    const focusElement = ref<HTMLElement>();
+
+    const focusId = ref<string>();
+
+    const setGlobalFocusElement = (id: string) => {
+        focusId.value = id;
+    };
 
     return {
-        focusElement
+        focusId,
+        setGlobalFocusElement
     };
 });

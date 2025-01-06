@@ -19,29 +19,12 @@ import { useContextMenu } from '@/composables/useContextMenu';
 import { useContextMenuStore } from '@/stores/contextMenuStore';
 import { storeToRefs } from 'pinia';
 import { useElementFocusStore } from '@/stores/elementFocusStore';
-import { useGridComponentStore } from '@/stores/gridComponentStore';
-import { useMandalaGrid } from '@/composables/useMandalaGrid';
-import { MandalaGrid } from '@/core/MandalaGrid';
+
 const { hideMenu, showMenu } = useContextMenu();
 const { showContextMenu, menuPositions } = storeToRefs(useContextMenuStore());
-const { focusElement } = storeToRefs(useElementFocusStore());
-const gridComponentStore = useGridComponentStore();
-const { createGridComponent } = useMandalaGrid();
+const { focusId } = storeToRefs(useElementFocusStore());
+const { contextMenuItems } = useContextMenu();
 
-const contextMenuItems = [
-  { 
-    label: 'Create New Grid', 
-    action: (e:MouseEvent)=> appendNewGridComponent(e)
-  },
-];
-
-const appendNewGridComponent = (e: MouseEvent) => {
-  const layout = { top: e.clientY, left: e.clientX };
-  const newGrid = new MandalaGrid('Exploratory');  
-
-  const newGridComponent = createGridComponent(newGrid, layout);
-  gridComponentStore.gridComponentList.push(newGridComponent);
-};
 
 /**
  * TODO: handle node focus element 
@@ -49,14 +32,12 @@ const appendNewGridComponent = (e: MouseEvent) => {
 const menuToggle = (e: MouseEvent) => {
   e.preventDefault();
 
-  console.log('focusElement', focusElement.value,e);
 
-  if (focusElement.value) {
-    hideMenu();
-    return;
+  if (focusId.value) {
+    console.log('focusId', focusId.value);
   }
 
-  if (showContextMenu.value && e.button === 0 || focusElement.value) {
+  if (showContextMenu.value && e.button === 0 || focusId.value) {
     hideMenu();
     return;
   }

@@ -36,12 +36,9 @@ import { useMouseDrag } from '@/composables/useMouseDrag';
 import MandalaNode from '@/components/MandalaNode.vue';
 import { useMandalaGrid, type GridComponent } from '@/composables/useMandalaGrid';
 import type { MandalaGrid } from '@/core/MandalaGrid';
-// import { useElementFocusStore } from '@/stores/elementFocusStore';
 const { grid, container, gridLayout } = defineProps<{ grid: MandalaGrid, container: HTMLElement | null, gridLayout: GridComponent['layout'] }>();
 const { locate, handleMouseMove, handleMouseUp, handleMousedown, setInitLocate } = useMouseDrag();
 const { extractNodeIndex, findNodeById } = useMandalaGrid();
-// TODO: impl store element to global focusElement, when grid or node focus
-// const { setGlobalFocusElement } = useElementFocusStore();
 
 const gridElement = ref<HTMLElement | null>(null);
 const focusGridId = ref<string | null>(null);
